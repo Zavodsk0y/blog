@@ -1,0 +1,15 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+
+<h3>Лента</h3>
+
+{% for post in posts %}
+
+<h2>{{ post.title }} - от пользователя <a href="{% url 'profile' profile.id %}">{{ profile.user }}</a></h2>
+<p>{{ post.description }}</p>
+<img src="{{ post.post_image.url }}" alt="Изображение отсутствует">
+
+{% endfor %}
+
+{% endblock %}
