@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<a href="{% url 'posts' %}">На главную</a>
+{% if user.profile %}
+    <span>{{ user.profile.username }}</span>
+{% else %}
+    <a href="{% url 'create_profile' %}">Создать профиль</a>
+{% endif %}
 {% block content%} {% endblock %}
 </body>
 </html>
