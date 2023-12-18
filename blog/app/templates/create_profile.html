@@ -1,0 +1,25 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+
+<h2>Создание профиля</h2>
+
+{% if user_profile %}
+
+<h2>У вас уже существует профиль!</h2>
+
+<a href="{% url 'posts' %}">На главную</a>
+
+{% else %}
+
+<p>Заполните данные ниже:</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Создать профиль">
+</form>
+
+{% endif %}
+
+{% endblock %}

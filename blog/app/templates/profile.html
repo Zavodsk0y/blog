@@ -1,0 +1,76 @@
+{% extends 'basic.html' %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+
+    <h2>Профиль пользователя {{ profile.username }}</h2>
+
+    <p>{{ profile.biography }}</p>
+
+    <img src="{{ profile.profile_image.url }}" alt="Изображение отсутствует" width="250px" height="250px">
+
+    {% if create_post_form %}
+        <h2>Как у вас дела?</h2>
+
+        <form method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ create_post_form.as_p }}
+            {% buttons %}
+                <button type="submit" class="btn btn-primary">Опубликовать пост</button>
+            {% endbuttons %}
+        </form>
+    {% endif %}
+
+    <h3>Посты пользователя:</h3>
+
+    {% for post in posts %}
+
+        <h4>{{ post.title }}</h4>
+        <p>{{ post.description }}</p>
+        {% if post.post_image %}
+            <img src="{{ post.post_image.url }}" alt="Изображение отсутствует" width="450px" height="450px">
+        {% endif %}
+
+        <h4>Комментарии:</h4>
+
+        <div>
+            {% for comment in post_comments %}
+                {% if comment.post == post %}
+                    <h5 style="margin-left: 20px">{{ comment.user }}</h5>
+                    <p style="margin-left: 20px">{{ comment.description }}
+                        {% if comment.user.profile == request.user.profile %}
+                            <p><a href="{% url 'edit_comment' comment.pk %}">Редактировать комментарий</a> | <a
+                                href="{% url 'delete_comment' comment.pk %}">Удалить комментарий</a></p>
+                        {% endif %}
+                    {% if comment.comment_image %}
+                        <img src="{{ comment.comment_image.url }}" alt="Изображение отсутствует" width="300px"
+                             height="300px">
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'create_comment' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            {% buttons %}
+                <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+            {% endbuttons %}
+        </form>
+        {% else %}
+        <p>Авторизуйтесь, чтобы добавлять новые комментарии</p>
+        {% endif %}
+
+        <hr>
+        <hr>
+
+    {% endfor %}
+    {% if profile.user == request.user %}
+        <p><a href="{% url 'edit_profile' %}">Редактировать профиль</a> | <a href="{% url 'delete_profile' %}">Удалить
+            профиль</a></p>
+    {% endif %}
+
+{% endblock %}
