@@ -1,0 +1,23 @@
+{% extends 'basic.html' %}
+
+{% load static %}
+
+{% block title %} Вход {% endblock %}
+
+{% block content %}
+{% for message in messages %}
+<div class="text-red alert alert-{{ message.tags }}">
+    {{ message }}
+</div>
+{% endfor %}
+<h2>Вход</h2>
+{% if user.is_authenticated %}
+<p>Вы уже выполнили вход.</p>
+{% else %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Войти</button>
+</form>
+{% endif %}
+{% endblock %}

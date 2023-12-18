@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import path
+
 from .views import *
 
 urlpatterns = [
+                  path('login/', BBLoginView.as_view(), name='login'),
+                  path('logout/', BBLogoutView.as_view(), name='logout'),
                   path('', PostsListView.as_view(), name='posts'),
                   path('create_profile', CreateProfileView.as_view(), name='create_profile'),
                   path('<int:pk>/profile', ProfileDetailView.as_view(), name='profile'),

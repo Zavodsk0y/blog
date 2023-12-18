@@ -7,7 +7,7 @@
 {% for post in posts %}
     <h2>{{ post.title }} - от пользователя
         {% if post.user.profile %}
-            <a href="{% url 'profile' pk=post.user.profile.pk %}">
+            <a href="{% url 'profile' post.user.profile.pk %}">
                 {{ post.user.profile.username }}
             </a>
         {% else %}

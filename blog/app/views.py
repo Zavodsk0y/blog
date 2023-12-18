@@ -1,16 +1,39 @@
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden, Http404
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy, reverse
+from django.contrib.auth.views import LogoutView, LoginView
+from django.http import HttpResponseForbidden, Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy
 from django.views import generic
 
 from .forms import *
+
+
+class BBLogoutView(LoginRequiredMixin, LogoutView):
+    template_name = 'registration/logged_out.html'
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        messages.success(request, 'Вы успешно вышли из аккаунта')
+        return HttpResponseRedirect(reverse('login'))
+
+
+class BBLoginView(LoginView):
+    template_name = 'registration/login.html'
 
 
 class CreateProfileView(LoginRequiredMixin, generic.CreateView):
     model = Profile
     template_name = 'create_profile.html'
     form_class = CreateProfileForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        user_profile = user.profile
+        context['user_profile'] = user_profile
+        return context
 
     def form_valid(self, form):
         if not hasattr(self.request.user, 'profile'):
@@ -33,6 +56,7 @@ class EditProfileView(LoginRequiredMixin, generic.UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'pk': self.request.user.profile.pk})
+
 
 class DeleteProfileView(LoginRequiredMixin, generic.DeleteView):
     model = Profile
